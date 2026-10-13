@@ -1,0 +1,62 @@
+seed: 2026
+output_dir: outputs/default_run
+
+data:
+  # Copy Stage-2 outputs/cwm_dataset into data/stage2_cwm_dataset, or edit this path.
+  root: data/stage2_cwm_dataset
+  train: train/train_dataset.mat
+  val: val/val_dataset.mat
+  test: test/test_dataset.mat
+  unseen: unseen_density/unseen_density_dataset.mat
+  num_workers: 0          # Windows-safe; increase to 2-4 if desired.
+  max_train_windows: null # null = use all valid H-step windows.
+  max_val_windows: 100000
+
+model:
+  x_dim: 9
+  a_dim: 3
+  y_dim: 6
+  hidden_dim: 256
+  latent_dim: 128
+  action_dim: 64
+  dropout: 0.05
+
+training:
+  rollout_horizon: 5
+  one_step_warmup_epochs: 5
+  epochs: 80
+  batch_size: 8192
+  val_batch_size: 16384
+  lr: 0.001
+  min_lr: 0.00002
+  weight_decay: 0.00001
+  grad_clip: 5.0
+  lambda_context: 1.0
+  horizon_decay: 0.85
+  physical_projection: true
+  early_stop_patience: 12
+  min_delta: 0.0001
+
+hardware:
+  device: auto
+  amp: true
+  amp_dtype: bf16
+  allow_tf32: true
+  compile: false
+
+evaluation:
+  max_horizon: 5
+  batch_size: 16384
+  max_windows: 120000
+
+planner:
+  horizon: 3
+  beam_size: 32
+  beta: 0.95
+  lambda_a: 0.5
+  R0_mbps: 100.0
+  A0_ms: 100.0
+  source_count: 1.0
+  stage1_lut_csv: data/stage1_phy_lut/phy_lut_4d.csv
+  eps_host: 0.10
+  eps_passive: 0.10

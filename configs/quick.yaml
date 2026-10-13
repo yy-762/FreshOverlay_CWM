@@ -1,0 +1,61 @@
+seed: 2026
+output_dir: outputs/quick_run
+
+data:
+  root: data/stage2_cwm_dataset
+  train: train/train_dataset.mat
+  val: val/val_dataset.mat
+  test: test/test_dataset.mat
+  unseen: unseen_density/unseen_density_dataset.mat
+  num_workers: 0
+  max_train_windows: 20000
+  max_val_windows: 5000
+
+model:
+  x_dim: 9
+  a_dim: 3
+  y_dim: 6
+  hidden_dim: 128
+  latent_dim: 64
+  action_dim: 32
+  dropout: 0.02
+
+training:
+  rollout_horizon: 3
+  one_step_warmup_epochs: 1
+  epochs: 3
+  batch_size: 2048
+  val_batch_size: 4096
+  lr: 0.001
+  min_lr: 0.00002
+  weight_decay: 0.00001
+  grad_clip: 5.0
+  lambda_context: 1.0
+  horizon_decay: 0.85
+  physical_projection: true
+  early_stop_patience: 3
+  min_delta: 0.0001
+
+hardware:
+  device: auto
+  amp: true
+  amp_dtype: bf16
+  allow_tf32: true
+  compile: false
+
+evaluation:
+  max_horizon: 3
+  batch_size: 4096
+  max_windows: 5000
+
+planner:
+  horizon: 2
+  beam_size: 8
+  beta: 0.95
+  lambda_a: 0.5
+  R0_mbps: 100.0
+  A0_ms: 100.0
+  source_count: 1.0
+  stage1_lut_csv: data/stage1_phy_lut/phy_lut_4d.csv
+  eps_host: 0.10
+  eps_passive: 0.10

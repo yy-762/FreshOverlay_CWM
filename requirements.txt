@@ -1,0 +1,9 @@
+numpy>=1.26
+pandas>=2.2
+h5py>=3.11
+PyYAML>=6.0
+matplotlib>=3.8
+tqdm>=4.66
+scikit-learn>=1.5
+pytest>=8.0
+scipy>=1.13

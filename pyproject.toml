@@ -1,0 +1,12 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "freshoverlay-cwm"
+version = "0.1.0"
+description = "Conditional World Model for FreshOverlay WWW experiments"
+requires-python = ">=3.10"
+
+[tool.setuptools]
+packages = ["cwm"]
