@@ -1,29 +1,31 @@
-# FreshOverlay CWM — minimal Python code
+# Conditional World Model for Passive Overlay Control
 
-This is a code-only package for the conditional world model, its training and
-evaluation, and closed-loop controller comparisons. It does **not** include
-datasets, PHY lookup tables, trained checkpoints, generated results, or the
-illustrative `SAMPLE` figures. Those inputs must be supplied separately.
+This repository contains the Python implementation of a conditional world model
+(CWM) for freshness-aware control in a passive overlay network. The model
+predicts how candidate communication actions affect throughput and Age of
+Information (AoI). A short-horizon planner uses those predictions to select
+actions subject to feasibility constraints.
 
-The MATLAB Stage 1 PHY simulator and Stage 2 trajectory generator are separate
-projects and are **not** included here. See `DATA_FORMAT.md` for
-the expected Stage 2 arrays.
+The code includes model training, prediction evaluation, action planning, and
+closed-loop comparisons with fixed, MCS-only, and masked-DQN controllers. It is
+a **code-only release**: datasets, PHY lookup tables, checkpoints, and generated
+figures are not included.
 
-## Layout
+## Repository contents
 
-```text
-cwm/       model, data loader, dynamics, planner, and LUT reader
-scripts/   training, evaluation, closed-loop baselines, and checks
-configs/   quick and full experiment settings
-tests/     small code tests
-data/      empty input locations (large files are ignored by Git)
-outputs/   generated files (ignored by Git)
-```
+| Path | Purpose |
+| --- | --- |
+| `cwm/` | World model, data loading, action planner, and PHY lookup utilities |
+| `scripts/` | Training, evaluation, controller comparisons, and checks |
+| `configs/` | Quick and full experiment configurations |
+| `tests/` | Unit tests and a data-independent smoke test |
+| `data/` | Locations for external experiment inputs |
+| `outputs/` | Generated checkpoints and results (ignored by Git) |
 
-## Install and check
+## Quick start
 
-Use Python 3.10 or newer. Install a PyTorch build suitable for your CPU/GPU,
-then run from this folder:
+Use Python 3.10 or newer. Install a PyTorch build appropriate for your machine,
+then run from the repository root:
 
 ```bash
 python -m pip install -r requirements.txt
@@ -32,15 +34,12 @@ python scripts/smoke_test.py
 python -m pytest -q
 ```
 
-The smoke test and data-independent unit tests do not need external inputs;
-the two LUT-dependent tests are skipped until the LUT is supplied. For the
-environment/data check, run this after placing the inputs below:
+The smoke test does not need experiment data. Two LUT-dependent tests are
+skipped until the PHY lookup table is available.
 
-```bash
-python scripts/check_environment.py --config configs/default.yaml
-```
+## Experiment inputs
 
-## External inputs
+Place the externally generated files at these paths:
 
 ```text
 data/stage2_cwm_dataset/train/train_dataset.mat
@@ -50,25 +49,26 @@ data/stage2_cwm_dataset/unseen_density/unseen_density_dataset.mat
 data/stage1_phy_lut/phy_lut_4d.csv
 ```
 
-The four MAT files are Stage 2 MATLAB v7.3/HDF5 outputs. The CSV is the Stage 1
-PHY LUT used for action masking and closed-loop evaluation. Do not commit
-private or large inputs unless you have permission to publish them.
+The MAT files contain the trajectory windows used to train and evaluate the
+world model; the CSV contains the PHY lookup table used by the planner and
+closed-loop simulator. See `DATA_FORMAT.md` for the expected data format. The
+MATLAB generators for these inputs are not part of this Python release.
 
-## Basic run order
+## Run the experiments
 
 ```bash
-python scripts/train.py --config configs/quick.yaml
+python scripts/check_environment.py --config configs/default.yaml
 python scripts/train.py --config configs/default.yaml
 python scripts/evaluate.py --config configs/default.yaml
 python scripts/plan_actions.py --config configs/default.yaml --split test --num-states 200 --horizon 3 --lambda-a 0.5
 python scripts/run_closed_loop_evaluation.py --quick
 ```
 
-The final command also needs the trained checkpoint at
-`outputs/default_run/checkpoints/best.pt` and the Stage 1 LUT CSV. `--quick` is
-only a smoke-sized evaluation; omit it for the full run. Results are written
-under `outputs/` and are not tracked by Git.
+The last command expects a trained checkpoint at
+`outputs/default_run/checkpoints/best.pt` and the PHY lookup table above. Its
+`--quick` option is for a small validation run; omit it for the full evaluation.
+All generated files are written under `outputs/`.
 
-This package does not claim to reproduce reported paper metrics without the
-original datasets, configuration, and checkpoints. In particular, the
-previously prepared `SAMPLE` plots are visual examples, not measured results.
+Reported paper results cannot be reproduced from this repository alone without
+the original experiment inputs and trained checkpoints. No illustrative or
+manually adjusted plots are included as measured results.
