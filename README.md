@@ -6,7 +6,7 @@ datasets, PHY lookup tables, trained checkpoints, generated results, or the
 illustrative `SAMPLE` figures. Those inputs must be supplied separately.
 
 The MATLAB Stage 1 PHY simulator and Stage 2 trajectory generator are separate
-projects and are **not** included here. See [DATA_FORMAT.md](DATA_FORMAT.md) for
+projects and are **not** included here. See `DATA_FORMAT.md` for
 the expected Stage 2 arrays.
 
 ## Layout
